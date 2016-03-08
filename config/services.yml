@@ -1,0 +1,12 @@
+services:
+    tas2580.lasttopiclink.listener:
+        class: tas2580\lasttopiclink\event\listener
+        arguments:
+            - @auth
+            - @config
+            - @request
+            - @path_helper
+            - %core.root_path%
+            - %core.php_ext%
+        tags:
+            - { name: event.listener }
