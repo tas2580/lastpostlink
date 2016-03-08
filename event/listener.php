@@ -76,8 +76,6 @@ class listener implements EventSubscriberInterface
 			'core.viewforum_modify_topicrow'			=> 'viewforum_modify_topicrow',
 			'core.search_modify_tpl_ary'				=> 'search_modify_tpl_ary',
 			'core.viewtopic_modify_post_row'			=> 'viewtopic_modify_post_row',
-
-
 		);
 	}
 
@@ -96,7 +94,6 @@ class listener implements EventSubscriberInterface
 			$event['append_sid_overwrite'] = $this->path_helper->update_web_root_path($this->phpbb_root_path);
 		}
 	}
-
 
 	/**
 	 * Get informations for the last post from Database
@@ -132,7 +129,6 @@ class listener implements EventSubscriberInterface
 			$event['forum_rows'] = $forum_rows;
 		}
 	}
-
 
 	/**
 	 * Rewrite links to forums and subforums in forum index
