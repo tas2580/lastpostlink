@@ -1,6 +1,6 @@
 services:
-    tas2580.lasttopiclink.listener:
-        class: tas2580\lasttopiclink\event\listener
+    tas2580.lastpostlink.listener:
+        class: tas2580\lastpostlink\event\listener
         arguments:
             - @auth
             - @config

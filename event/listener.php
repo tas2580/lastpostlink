@@ -2,13 +2,13 @@
 
 /**
  *
- * @package phpBB Extension - tas2580 lasttopiclink
+ * @package phpBB Extension - tas2580 lastpostlink
  * @copyright (c) 2016 tas2580 (https://tas2580.net)
  * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
  *
  */
 
-namespace tas2580\lasttopiclink\event;
+namespace tas2580\lastpostlink\event;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
