@@ -1,7 +1,7 @@
 {
 	"stable": {
-		"0.1": {
-			"current": "0.1.0",
+		"1.0": {
+			"current": "1.0.0-RC1",
 			"download": "https://tas2580.net/downloads/phpbb-lastpostlink/",
 			"announcement": "",
 			"eol": null,
