@@ -74,7 +74,7 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Get informations for the last post from Database
+	 * Get informations for the last post from database
 	 *
 	 * @param	object	$event	The event object
 	 * @return	null
@@ -109,7 +109,7 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Rewrite links to forums and subforums in forum index
+	 * Rewrite links to last post in forum index
 	 * also correct the path of the forum images if we are in a forum
 	 *
 	 * @param	object	$event	The event object
@@ -144,7 +144,7 @@ class listener implements EventSubscriberInterface
 	}
 
 	/**
-	 * Rewrite links to topics in forum view
+	 * Rewrite links to last post in forum view
 	 *
 	 * @param	object	$event	The event object
 	 * @return	null
