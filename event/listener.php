@@ -17,7 +17,6 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class listener implements EventSubscriberInterface
 {
-
 	/** @var \phpbb\auth\auth */
 	protected $auth;
 
@@ -26,9 +25,6 @@ class listener implements EventSubscriberInterface
 
 	/** @var \phpbb\request\request */
 	protected $request;
-
-	/** @var \phpbb\path_helper */
-	protected $path_helper;
 
 	/** @var string phpbb_root_path */
 	protected $phpbb_root_path;
@@ -48,12 +44,11 @@ class listener implements EventSubscriberInterface
 	 * @param string                         $phpbb_root_path	phpbb_root_path
 	 * @access public
 	 */
-	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\request\request $request, \phpbb\path_helper $path_helper, $phpbb_root_path, $php_ext)
+	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\request\request $request, $phpbb_root_path, $php_ext)
 	{
 		$this->auth = $auth;
 		$this->config = $config;
 		$this->request = $request;
-		$this->path_helper = $path_helper;
 		$this->phpbb_root_path = $phpbb_root_path;
 		$this->php_ext =$php_ext;
 	}
@@ -68,7 +63,6 @@ class listener implements EventSubscriberInterface
 	static public function getSubscribedEvents()
 	{
 		return array(
-			'core.append_sid'						=> 'append_sid',
 			'core.display_forums_modify_sql'			=> 'display_forums_modify_sql',
 			'core.display_forums_modify_template_vars'	=> 'display_forums_modify_template_vars',
 			'core.display_forums_modify_forum_rows'		=> 'display_forums_modify_forum_rows',
@@ -77,22 +71,6 @@ class listener implements EventSubscriberInterface
 			'core.search_modify_tpl_ary'				=> 'search_modify_tpl_ary',
 			'core.viewtopic_modify_post_row'			=> 'viewtopic_modify_post_row',
 		);
-	}
-
-	/**
-	 * Rewrite forum index from index.php to forum.html
-	 *
-	 * @param	object	$event	The event object
-	 * @return	null
-	 * @access	public
-	 */
-	public function append_sid($event)
-	{
-		if ($event['url'] == $this->path_helper->update_web_root_path($this->phpbb_root_path . 'index.php') && empty($event['params']))
-		{
-			//$event['append_sid_overwrite'] = $this->path_helper->update_web_root_path($this->phpbb_root_path . 'forum.html');
-			$event['append_sid_overwrite'] = $this->path_helper->update_web_root_path($this->phpbb_root_path);
-		}
 	}
 
 	/**
@@ -144,11 +122,9 @@ class listener implements EventSubscriberInterface
 		$url = $this->generate_topic_link($event['row']['forum_id_last_post'], $event['row']['topic_id_last_post']);
 
 		$forum_row = $event['forum_row'];
-		$forum_row['U_LAST_POST'] = $this->generate_lastpost($replies, $url) . '#p' . $event['row']['forum_last_post_id'];
+		$forum_row['U_LAST_POST'] = $this->generate_lastpost_link($replies, $url) . '#p' . $event['row']['forum_last_post_id'];
 		$event['forum_row'] = $forum_row;
 	}
-
-
 
 	/**
 	 * Rewrite links in the search result
@@ -163,7 +139,7 @@ class listener implements EventSubscriberInterface
 		$url = $this->generate_topic_link($event['row']['forum_id'], $event['row']['topic_id']);
 
 		$tpl_ary = $event['tpl_ary'];
-		$tpl_ary['U_LAST_POST'] = $this->generate_lastpost($replies, $url) . '#p' . $event['row']['topic_last_post_id'];
+		$tpl_ary['U_LAST_POST'] = $this->generate_lastpost_link($replies, $url) . '#p' . $event['row']['topic_last_post_id'];
 		$event['tpl_ary'] = $tpl_ary;
 	}
 
@@ -177,7 +153,7 @@ class listener implements EventSubscriberInterface
 	public function viewforum_modify_topicrow($event)
 	{
 		$topic_row = $event['topic_row'];
-		$topic_row['U_LAST_POST'] = $this->generate_lastpost($event['topic_row']['REPLIES'], $topic_row['U_VIEW_TOPIC']) . '#p' . $event['row']['topic_last_post_id'];
+		$topic_row['U_LAST_POST'] = $this->generate_lastpost_link($event['topic_row']['REPLIES'], $topic_row['U_VIEW_TOPIC']) . '#p' . $event['row']['topic_last_post_id'];
 		$event['topic_row'] = $topic_row;
 	}
 
@@ -205,7 +181,7 @@ class listener implements EventSubscriberInterface
 	private function generate_topic_link($forum_id, $topic_id)
 	{
 		$start = $this->request->variable('start', 0);
-		return $this->phpbb_root_path . 'viewtopic.' . $this->php_ext . '?f=' . $forum_id . '&t=' . $topic_id . (($start > 0) ? '&start=' . $start : '');
+		return append_sid($this->phpbb_root_path . 'viewtopic.' . $this->php_ext . '?f=' . $forum_id . '&t=' . $topic_id . (($start > 0) ? '&start=' . $start : ''));
 	}
 
 	/**
@@ -216,7 +192,7 @@ class listener implements EventSubscriberInterface
 	 * @param $url		string		URL oft the topic
 	 * @return			string		The URL with start included
 	 */
-	private function generate_lastpost($replies, $url)
+	private function generate_lastpost_link($replies, $url)
 	{
 		$per_page = ($this->config['posts_per_page'] <= 0) ? 1 : $this->config['posts_per_page'];
 		if (($replies + 1) > $per_page)
@@ -224,7 +200,7 @@ class listener implements EventSubscriberInterface
 			$times = 1;
 			for ($j = 0; $j < $replies + 1; $j += $per_page)
 			{
-				$last_post_link = append_sid($url .  '&start=' . $j);
+				$last_post_link = $url .  '&start=' . $j;
 				$times++;
 			}
 		}
@@ -232,7 +208,7 @@ class listener implements EventSubscriberInterface
 		{
 			$last_post_link = $url;
 		}
-		return $last_post_link;
+		return append_sid($last_post_link);
 	}
 
 	/**
@@ -252,5 +228,4 @@ class listener implements EventSubscriberInterface
 
 		return (int) $data[$mode . '_approved'] + (int) $data[$mode . '_unapproved'] + (int) $data[$mode . '_softdeleted'];
 	}
-
 }
