@@ -36,12 +36,10 @@ class listener implements EventSubscriberInterface
 	 * Constructor
 	 *
 	 * @param \phpbb\auth\auth				auth				Authentication object
-	 * @param \phpbb\config\config			$config				Config Object
-	 * @param \phpbb\template\template		$template			Template object
+	 * @param \phpbb\config\config			$config			Config Object
 	 * @param \phpbb\request\request			$request			Request object
-	 * @param \phpbb\user					$user				User Object
-	 * @param \phpbb\path_helper				$path_helper		Controller helper object
-	 * @param string                         $phpbb_root_path	phpbb_root_path
+	 * @param string						$phpbb_root_path	phpbb_root_path
+	 * @param string						$php_ext			php_ext
 	 * @access public
 	 */
 	public function __construct(\phpbb\auth\auth $auth, \phpbb\config\config $config, \phpbb\request\request $request, $phpbb_root_path, $php_ext)
@@ -60,7 +58,7 @@ class listener implements EventSubscriberInterface
 	 * @static
 	 * @access public
 	 */
-	static public function getSubscribedEvents()
+	public static function getSubscribedEvents()
 	{
 		return array(
 			'core.display_forums_modify_sql'			=> 'display_forums_modify_sql',
@@ -197,11 +195,9 @@ class listener implements EventSubscriberInterface
 		$per_page = ($this->config['posts_per_page'] <= 0) ? 1 : $this->config['posts_per_page'];
 		if (($replies + 1) > $per_page)
 		{
-			$times = 1;
 			for ($j = 0; $j < $replies + 1; $j += $per_page)
 			{
 				$last_post_link = $url .  '&start=' . $j;
-				$times++;
 			}
 		}
 		else
